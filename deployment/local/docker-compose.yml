@@ -1,4 +1,36 @@
 services:
+  postgres_db:
+    image: postgres:11
+    restart: always
+    ports:
+      - "6000:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build:
+      dockerfile: api/Dockerfile
+      context: "./../"
+    image: api:latest
+    depends_on:
+      - postgres_db
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: postgres_db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_SCHEMA: ${DB_SCHEMA}
+      DB_PORT: ${DB_PORT}
+      PORT: ${NODE_API_PORT}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      LOG_LEVEL: ${LOG_LEVEL}
+  
   frontend:
     build:
       context: ../../frontend
@@ -65,3 +97,6 @@ services:
 networks:
   default:
     name: app-network
+
+volumes: 
+  pgdata:

@@ -7,6 +7,7 @@ A production-ready setup for building Vue 3 applications with TypeScript, testin
 ## Features
 
 - **Frontend:** Vue 3, TypeScript, Vite
+- **API:** Node.js, TypeORM
 - **Testing:** Vitest, Testing Library, Jest DOM
 - **Code Quality:** ESLint, Prettier
 - **Docker:** Multi-stage Dockerfile for production builds
@@ -34,6 +35,7 @@ A production-ready setup for building Vue 3 applications with TypeScript, testin
 Each project manages its own dependencies:
 ```bash
 cd frontend && npm install
+cd api && npm install
 ```
 
 ### Available Scripts
@@ -49,11 +51,15 @@ cd frontend && npm install
 ```bash
 # Terminal 1 (frontend)
 cd frontend && npm run dev
+
+# Terminal 2 (frontend)
+cd api && npm run start
 ```
 
 Access locally:
 
 - Frontend → http://localhost:${FRONTEND_DEV_PORT:-5173}
+- API → http://localhost:${NODE_API_PORT:-5000}
 - Backend → 
 - Swagger UI →
 
@@ -67,6 +73,10 @@ Before committing code, make sure files are linted and formatted:
 # Format & lint frontend
 cd frontend && npm run lint
 cd frontend && npm run lint:fix
+
+# Format & lint api
+cd api && npm run pretest
+cd api && npm run lint
 ```
 
 ⚡ Husky + lint-staged will auto-run these checks on staged files during commits.
@@ -122,6 +132,7 @@ docker compose up -d --build
 Access locally via docker:
 
 - Frontend → http://localhost:${FRONTEND_DEV_PORT:-8080}
+- API → http://localhost:${NODE_API_PORT:-5000}
 - Backend → 
 - Swagger UI →
 
