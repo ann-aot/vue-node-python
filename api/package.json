@@ -11,7 +11,7 @@
     "build": "tsc",
     "pretest": "eslint src --ext .ts",
     "lint": "eslint --fix src --ext .ts",
-    "test": "jest --detectOpenHandles --passWithNoTests--config ./jest.config.js"
+    "test": "jest --detectOpenHandles --passWithNoTests --config ./jest.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
