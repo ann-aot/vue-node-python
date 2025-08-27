@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-
-type TaskSummary = {
-  id: string;
-  name: string;
-  spec_name: string;
-};
-
-type WorkflowInstance = {
-  id: string;
-  name: string;
-  status: string;
-  ready_user_tasks: TaskSummary[];
-};
-
-const apiBase = import.meta.env.VITE_API_BASE ?? 'http://localhost:8300/api/v1';
+import type { WorkflowInstance } from '../types/workflow';
+import {
+  listWorkflows,
+  startWorkflow as apiStartWorkflow,
+  completeUserTask,
+} from '../services/workflows';
 
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -24,9 +15,7 @@ async function fetchInstances() {
   loading.value = true;
   error.value = null;
   try {
-    const res = await fetch(`${apiBase}/workflows/`);
-    if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
-    instances.value = (await res.json()) as WorkflowInstance[];
+    instances.value = await listWorkflows();
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : String(e);
   } finally {
@@ -38,12 +27,7 @@ async function startWorkflow() {
   loading.value = true;
   error.value = null;
   try {
-    const res = await fetch(`${apiBase}/workflows/start`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'Simple Approval' }),
-    });
-    if (!res.ok) throw new Error(`Failed to start: ${res.status}`);
+    await apiStartWorkflow('Simple Approval');
     await fetchInstances();
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : String(e);
@@ -64,12 +48,7 @@ async function completeTask(instanceId: string, taskId: string, data: Record<str
   loading.value = true;
   error.value = null;
   try {
-    const res = await fetch(`${apiBase}/workflows/${instanceId}/tasks/${taskId}/complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data }),
-    });
-    if (!res.ok) throw new Error(`Failed to complete: ${res.status}`);
+    await completeUserTask(instanceId, taskId, data);
     await fetchInstances();
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : String(e);
