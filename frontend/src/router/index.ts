@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
 import HelloWorld from '../components/HelloWorld.vue';
-import WorkflowList from '../components/WorkflowList.vue';
+import WorkflowList from '../view/WorkflowList.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { path: '/', name: 'home', component: HelloWorld },
