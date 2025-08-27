@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             id="Defs"
+             targetNamespace="http://example.com/bpmn/simple_approval">
+  <process id="SimpleApproval" name="Simple Approval" isExecutable="true">
+    <startEvent id="start" name="Start" />
+    <userTask id="approval_task" name="Approve Request" />
+    <exclusiveGateway id="gateway" name="Approved?" />
+    <endEvent id="approved_end" name="Approved" />
+    <endEvent id="rejected_end" name="Rejected" />
+
+    <sequenceFlow id="flow_start_to_task" sourceRef="start" targetRef="approval_task" />
+    <sequenceFlow id="flow_task_to_gateway" sourceRef="approval_task" targetRef="gateway" />
+    <sequenceFlow id="flow_gateway_to_approved" sourceRef="gateway" targetRef="approved_end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow_gateway_to_rejected" sourceRef="gateway" targetRef="rejected_end">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved != true}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+</definitions>
+
