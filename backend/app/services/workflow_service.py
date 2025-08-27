@@ -66,7 +66,11 @@ class WorkflowService:
         return spec
 
     @staticmethod
-    def start_workflow(name: str, bpmn_filename: str, process_id: str) -> Dict:
+    def start_workflow(
+        name: str,
+        bpmn_filename: str,
+        process_id: str,
+    ) -> dict:
         spec = WorkflowService.load_spec(bpmn_filename, process_id)
         workflow = BpmnWorkflow(spec)
         workflow.do_engine_steps()
@@ -79,7 +83,10 @@ class WorkflowService:
     @staticmethod
     def list_workflows() -> list[dict]:
         with WorkflowService._lock:
-            return [instance.to_dict() for instance in WorkflowService._instances.values()]
+            return [
+                instance.to_dict()
+                for instance in WorkflowService._instances.values()
+            ]
 
     @staticmethod
     def get_instance(instance_id: str) -> WorkflowInstance:
@@ -104,7 +111,10 @@ class WorkflowService:
     def complete_user_task(instance_id: str, task_id: int, data: dict) -> dict:
         instance = WorkflowService.get_instance(instance_id)
         workflow = instance.workflow
-        task: Optional[Task] = next((t for t in workflow.get_tasks() if t.id == task_id), None)
+        task: Optional[Task] = next(
+            (t for t in workflow.get_tasks() if t.id == task_id),
+            None,
+        )
         if task is None:
             raise KeyError("Task not found")
         if task.state != TaskState.READY:
