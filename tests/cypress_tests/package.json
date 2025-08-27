@@ -1,0 +1,25 @@
+{
+  "name": "cypress_tests",
+  "version": "1.0.0",
+  "description": "Cypress functional tests for the CHEFS project",
+  "main": "cypress.config.js",
+  "type": "module",
+  "scripts": {
+    "start": "cypress open",
+    "test": "cypress run",
+    "verify": "cypress verify",
+    "clean": "rimraf cypress/screenshots cypress/videos"
+  },
+  "keywords": [
+    "cypress",
+    "testing",
+    "chefs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^15.0.0",
+    "fast-csv": "^5.0.5",
+    "rimraf": "^5.0.5"
+  }
+}
