@@ -19,7 +19,7 @@ A modern FastAPI boilerplate with proper separation of concerns, PostgreSQL inte
 ## 📁 **Project Structure**
 
 ```
-python-fastapi/
+backend/
 ├── app/
 │   ├── __init__.py
 │   ├── database.py              # Database configuration
@@ -65,7 +65,7 @@ python-fastapi/
 1. **Clone the repository**
    ```bash
    git clone <your-repo-url>
-   cd python-fastapi
+   cd backend
    ```
 
 2. **Run with Docker Compose**

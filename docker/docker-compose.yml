@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: ../../frontend
+      context: ../frontend
       dockerfile: Dockerfile
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3000}
@@ -13,11 +13,11 @@ services:
     environment:
       - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3000}
     ports:
-      - "${FRONTEND_HTTP_PORT:-8080}:80"
+      - "${FRONTEND_HTTP_PORT:-4000}:80"
     restart: unless-stopped
   backend:
     build:
-      context: ../../backend
+      context: ../backend
       dockerfile: Dockerfile
     container_name: app-backend
     env_file:
@@ -28,9 +28,6 @@ services:
       - DATABASE_URL=${DATABASE_URL:-postgresql://fastapi_user:fastapi_password@postgres:5432/fastapi_db}
     ports:
       - "8300:8000"
-    volumes:
-      - .:/app
-      - /app/__pycache__
     restart: unless-stopped
     depends_on:
       postgres:
@@ -52,8 +49,6 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "7432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U fastapi_user -d fastapi_db"]

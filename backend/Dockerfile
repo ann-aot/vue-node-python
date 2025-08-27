@@ -18,6 +18,7 @@ RUN apt-get update \
         curl \
         libpq-dev \
         postgresql-client \
+        dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -30,8 +31,9 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy application code
 COPY . .
 
-# Make entrypoint script executable
-RUN chmod +x docker-entrypoint.sh
+# Convert entrypoint script to LF and make it executable
+RUN dos2unix /app/docker-entrypoint.sh \
+    && chmod +x /app/docker-entrypoint.sh
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser \

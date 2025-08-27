@@ -1,27 +1,61 @@
-# Use a custom Docker image
-image:
-  file: .gitpod.Dockerfile
+image: gitpod/workspace-full:latest
 
-# Tasks to run when workspace starts
 tasks:
-  - name: Install & Start Vue
+  - name: infrastructure
+    before: |
+      echo 'Bringing down any previously running containers'
     init: |
-      cd frontend
-      npm install
+      cd docker
+      docker-compose down -v
+  - name: postgres
+    init: |
+      cd docker
+      echo 'Starting postgres container'
+      docker-compose up -d postgres
+      echo 'Started postgres'
+  - name: backend
+    init: |
+      cd docker
+      echo 'Building backend container'
+      docker-compose build backend
+      echo 'Built backend'
     command: |
-      cd frontend
-      npm run dev
+      gp await-port 7432
+      cd docker
+      echo 'Starting backend container'
+      docker-compose up -d backend
+      echo 'Started backend'
+  - name: frontend
+    init: |
+      cd docker
+      echo 'Copying .env-gitpod to .env'
+      cp .env-gitpod .env
+      eval $(gp env -e)
+      export VITE_API_BASE_URL=$(gp url 8300)
+      echo 'Building frontend container'
+      docker-compose build frontend
+      echo 'Built frontend'
+    command: |
+      gp await-port 8300
+      eval $(gp env -e)
+      export VITE_API_BASE_URL=$(gp url 8300)
+      cd docker
+      echo 'Starting frontend container'
+      docker-compose up -d frontend
+      echo 'Started frontend'
 
-
-# Ports to expose
 ports:
-  - port: 5173
+  - name: Frontend
+    description: Port 4000 for the frontend
+    port: 4000
     onOpen: open-preview
-
-# VS Code extensions for Vue 3 + Vite
-vscode:
-  extensions:
-    - octref.vetur        # Vue tooling
-    - Vue.volar           # Vue 3 IntelliSense
-    - esbenp.prettier-vscode
-    - dbaeumer.vscode-eslint
+    visibility: public
+  - name: Backend
+    description: Port 8300 for the backend
+    port: 8300
+    onOpen: notify
+    visibility: public
+  - name: postgres
+    description: Port 7432 for the postgres
+    port: 7432
+    onOpen: ignore
