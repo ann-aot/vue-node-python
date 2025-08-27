@@ -1,7 +1,7 @@
 import threading
 import uuid
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 from SpiffWorkflow.bpmn.parser import BpmnParser
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
@@ -14,7 +14,7 @@ class WorkflowInstance:
         self.name = name
         self.workflow = workflow
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "id": self.instance_id,
             "name": self.name,
@@ -39,9 +39,9 @@ class WorkflowInstance:
 
 class WorkflowService:
     _lock = threading.Lock()
-    _instances: Dict[str, WorkflowInstance] = {}
+    _instances: dict[str, WorkflowInstance] = {}
     _parser: Optional[BpmnParser] = None
-    _spec_cache: Dict[str, object] = {}
+    _spec_cache: dict[str, object] = {}
 
     @staticmethod
     def _get_parser() -> BpmnParser:
@@ -77,7 +77,7 @@ class WorkflowService:
         return instance.to_dict()
 
     @staticmethod
-    def list_workflows() -> List[Dict]:
+    def list_workflows() -> list[dict]:
         with WorkflowService._lock:
             return [instance.to_dict() for instance in WorkflowService._instances.values()]
 
@@ -90,8 +90,8 @@ class WorkflowService:
         return instance
 
     @staticmethod
-    def get_ready_user_tasks(workflow: BpmnWorkflow) -> List[Task]:
-        tasks: List[Task] = workflow.get_tasks(state=TaskState.READY)
+    def get_ready_user_tasks(workflow: BpmnWorkflow) -> list[Task]:
+        tasks: list[Task] = workflow.get_tasks(state=TaskState.READY)
         def is_user_task(t: Task) -> bool:
             name = getattr(t.task_spec, "bpmn_name", "")
             if isinstance(name, str) and name.lower() == "usertask":
@@ -101,7 +101,7 @@ class WorkflowService:
         return [t for t in tasks if is_user_task(t)]
 
     @staticmethod
-    def complete_user_task(instance_id: str, task_id: int, data: Dict) -> Dict:
+    def complete_user_task(instance_id: str, task_id: int, data: dict) -> dict:
         instance = WorkflowService.get_instance(instance_id)
         workflow = instance.workflow
         task: Optional[Task] = next((t for t in workflow.get_tasks() if t.id == task_id), None)
