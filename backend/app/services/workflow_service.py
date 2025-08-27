@@ -5,8 +5,7 @@ from typing import Dict, List, Optional
 
 from SpiffWorkflow.bpmn.parser import BpmnParser
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
-from SpiffWorkflow.task import Task
-from SpiffWorkflow.task_state import TaskState
+from SpiffWorkflow.task import Task, TaskState
 
 
 class WorkflowInstance:
