@@ -5,7 +5,6 @@ from pathlib import Path
 from SpiffWorkflow.bpmn.parser import BpmnParser
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
 from SpiffWorkflow.task import Task, TaskState
-from SpiffWorkflow.bpmn.specs.UserTask import UserTask
 
 
 class WorkflowInstance:
@@ -101,7 +100,13 @@ class WorkflowService:
     @staticmethod
     def get_ready_user_tasks(workflow: BpmnWorkflow) -> list[Task]:
         tasks: list[Task] = workflow.get_tasks(state=TaskState.READY)
-        return [t for t in tasks if isinstance(t.task_spec, UserTask)]
+        # Identify BPMN User Tasks by bpmn_name or class name heuristic
+        def is_user_task(t: Task) -> bool:
+            name = getattr(t.task_spec, "bpmn_name", "")
+            if isinstance(name, str) and name.lower() == "usertask":
+                return True
+            return "usertask" in t.task_spec.__class__.__name__.lower()
+        return [t for t in tasks if is_user_task(t)]
 
     @staticmethod
     def complete_user_task(instance_id: str, task_id: str, data: dict) -> dict:
