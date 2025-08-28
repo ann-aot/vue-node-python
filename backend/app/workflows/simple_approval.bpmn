@@ -1,24 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
-             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
-             id="Defs"
-             targetNamespace="http://example.com/bpmn/simple_approval">
-  <process id="SimpleApproval" name="Simple Approval" isExecutable="true">
-    <startEvent id="start" name="Start" />
-    <userTask id="approval_task" name="Approve Request" />
-    <exclusiveGateway id="gateway" name="Approved?" default="flow_gateway_to_rejected" />
-    <endEvent id="approved_end" name="Approved" />
-    <endEvent id="rejected_end" name="Rejected" />
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                   id="Defs"
+                   targetNamespace="http://example.com/bpmn/simple_approval">
+  <bpmn2:process id="SimpleApproval" name="Simple Approval" isExecutable="true">
+    <bpmn2:startEvent id="StartEvent_1" name="Start">
+      <bpmn2:outgoing>Flow_Start_Task</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="UserTask_Approve" name="Approve Request">
+      <bpmn2:incoming>Flow_Start_Task</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_Task_GW</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="Gateway_Approved" name="Approved?" default="Flow_GW_Rejected">
+      <bpmn2:incoming>Flow_Task_GW</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_GW_Approved</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_GW_Rejected</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="EndEvent_Approved" name="Approved">
+      <bpmn2:incoming>Flow_GW_Approved</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:endEvent id="EndEvent_Rejected" name="Rejected">
+      <bpmn2:incoming>Flow_GW_Rejected</bpmn2:incoming>
+    </bpmn2:endEvent>
 
-    <sequenceFlow id="flow_start_to_task" sourceRef="start" targetRef="approval_task" />
-    <sequenceFlow id="flow_task_to_gateway" sourceRef="approval_task" targetRef="gateway" />
-    <sequenceFlow id="flow_gateway_to_approved" sourceRef="gateway" targetRef="approved_end">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="flow_gateway_to_rejected" sourceRef="gateway" targetRef="rejected_end" />
-  </process>
-</definitions>
+    <bpmn2:sequenceFlow id="Flow_Start_Task" sourceRef="StartEvent_1" targetRef="UserTask_Approve"/>
+    <bpmn2:sequenceFlow id="Flow_Task_GW" sourceRef="UserTask_Approve" targetRef="Gateway_Approved"/>
+    <bpmn2:sequenceFlow id="Flow_GW_Approved" sourceRef="Gateway_Approved" targetRef="EndEvent_Approved">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[approved]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_GW_Rejected" sourceRef="Gateway_Approved" targetRef="EndEvent_Rejected"/>
+  </bpmn2:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SimpleApproval">
+      <bpmndi:BPMNShape id="Shape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds x="150" y="100" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_UserTask_Approve" bpmnElement="UserTask_Approve">
+        <dc:Bounds x="240" y="80" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Approved" bpmnElement="Gateway_Approved" isMarkerVisible="true">
+        <dc:Bounds x="400" y="95" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EndEvent_Approved" bpmnElement="EndEvent_Approved">
+        <dc:Bounds x="520" y="60" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EndEvent_Rejected" bpmnElement="EndEvent_Rejected">
+        <dc:Bounds x="520" y="140" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_Start_Task" bpmnElement="Flow_Start_Task">
+        <di:waypoint x="186" y="118"/>
+        <di:waypoint x="240" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Task_GW" bpmnElement="Flow_Task_GW">
+        <di:waypoint x="360" y="118"/>
+        <di:waypoint x="400" y="120"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_Approved" bpmnElement="Flow_GW_Approved">
+        <di:waypoint x="450" y="120"/>
+        <di:waypoint x="520" y="78"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_Rejected" bpmnElement="Flow_GW_Rejected">
+        <di:waypoint x="450" y="120"/>
+        <di:waypoint x="520" y="158"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
 
