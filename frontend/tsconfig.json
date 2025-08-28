@@ -14,12 +14,19 @@
       "./node_modules/@types",
       "./@types"
     ],
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "types": [
+      "node",
       "vite/client",
       "vuetify",
+      "vuex",
     ]
   }
 }
