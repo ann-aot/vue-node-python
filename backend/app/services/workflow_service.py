@@ -126,7 +126,21 @@ class WorkflowService:
         if task is None:
             raise KeyError("Task not found")
         if task.state != TaskState.READY:
-            raise ValueError("Task is not ready")
+            # Attempt to move the task to READY state, then re-check
+            try:
+                workflow.run_task_from_id(task.id)
+                # Some engines require refreshing waiting tasks
+                if hasattr(workflow, "refresh_waiting_tasks"):
+                    workflow.refresh_waiting_tasks()
+            except Exception:
+                pass
+            # Re-fetch task and verify state
+            try:
+                task = workflow.get_task_from_id(task.id)
+            except Exception:
+                pass
+            if task.state != TaskState.READY:
+                raise ValueError("Task is not ready")
         task.data.update(data or {})
         # Ensure gateway conditions can see the variables
         workflow.data.update(data or {})
