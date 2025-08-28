@@ -1,7 +1,6 @@
 import threading
 import uuid
 from pathlib import Path
-from typing import Optional
 
 from SpiffWorkflow.bpmn.parser import BpmnParser
 from SpiffWorkflow.bpmn.workflow import BpmnWorkflow
@@ -42,7 +41,7 @@ class WorkflowInstance:
 class WorkflowService:
     _lock = threading.Lock()
     _instances: dict[str, WorkflowInstance] = {}
-    _parser: Optional[BpmnParser] = None
+    _parser: BpmnParser | None = None
     _spec_cache: dict[str, object] = {}
 
     @staticmethod
@@ -122,7 +121,7 @@ class WorkflowService:
             raise ValueError(
                 "task_id must be the integer id from ready_user_tasks.id"
             )
-        task: Optional[Task] = next(
+        task: Task | None = next(
             (t for t in workflow.get_tasks() if t.id == numeric_task_id),
             None,
         )
