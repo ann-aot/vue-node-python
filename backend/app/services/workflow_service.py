@@ -106,6 +106,7 @@ class WorkflowService:
             t for t in tasks_waiting if t not in tasks_ready
         ]
         # Identify BPMN User Tasks by bpmn_name or class name heuristic
+
         def is_user_task(t: Task) -> bool:
             name = getattr(t.task_spec, "bpmn_name", "")
             if isinstance(name, str) and name.lower() == "usertask":
@@ -154,4 +155,3 @@ class WorkflowService:
         task.complete()
         workflow.do_engine_steps()
         return instance.to_dict()
-

@@ -19,4 +19,3 @@ export async function completeUserTask(
     body: { data },
   });
 }
-

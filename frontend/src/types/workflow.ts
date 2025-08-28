@@ -10,4 +10,3 @@ export type WorkflowInstance = {
   status: string;
   ready_user_tasks: TaskSummary[];
 };
-

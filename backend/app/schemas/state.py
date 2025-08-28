@@ -13,9 +13,9 @@ class StateBase(CustomBaseModel):
                       description="State name"
                       )
     description: str | None = Field(None,
-                                       max_length=200,
-                                       description="State description"
-                                       )
+                                    max_length=200,
+                                    description="State description"
+                                    )
     is_active: bool = Field(True, description="Whether the state is active")
     sort_order: int = Field(0, ge=0, description="Sort order for display")
 
