@@ -41,14 +41,11 @@ class WorkflowInstance:
 class WorkflowService:
     _lock = threading.Lock()
     _instances: dict[str, WorkflowInstance] = {}
-    _parser: BpmnParser | None = None
-    _spec_cache: dict[str, object] = {}
 
     @staticmethod
     def _get_parser() -> BpmnParser:
-        if WorkflowService._parser is None:
-            WorkflowService._parser = BpmnParser()
-        return WorkflowService._parser
+        # Always use a fresh parser so BPMN edits are picked up in dev
+        return BpmnParser()
 
     @staticmethod
     def _get_bpmn_path(filename: str) -> Path:
@@ -57,21 +54,10 @@ class WorkflowService:
 
     @staticmethod
     def load_spec(bpmn_filename: str, process_id: str):
-        cache_key = f"{bpmn_filename}::{process_id}"
-        # Return from cache if present
-        if cache_key in WorkflowService._spec_cache:
-            return WorkflowService._spec_cache[cache_key]
         parser = WorkflowService._get_parser()
         path = WorkflowService._get_bpmn_path(bpmn_filename)
-        # First try to fetch an existing spec in the parser
-        try:
-            spec = parser.get_spec(process_id)
-        except Exception:
-            # Not loaded yet: register BPMN file, then get spec by process id
-            parser.add_bpmn_file(str(path))
-            spec = parser.get_spec(process_id)
-        WorkflowService._spec_cache[cache_key] = spec
-        return spec
+        parser.add_bpmn_file(str(path))
+        return parser.get_spec(process_id)
 
     @staticmethod
     def start_workflow(
@@ -81,6 +67,8 @@ class WorkflowService:
     ) -> dict:
         spec = WorkflowService.load_spec(bpmn_filename, process_id)
         workflow = BpmnWorkflow(spec)
+        # Initialize defaults so expressions have values
+        workflow.data["approved"] = False
         workflow.do_engine_steps()
         instance_id = str(uuid.uuid4())
         instance = WorkflowInstance(instance_id, name, workflow)
@@ -156,10 +144,10 @@ class WorkflowService:
                 pass
             if task.state != TaskState.READY:
                 raise ValueError("Task is not ready")
-        # Normalize approved flag to a string ('true'/'false') for expression
+        # Normalize approved flag to boolean for expression
         normalized: dict = dict(data or {})
         if "approved" in normalized:
-            normalized["approved"] = "true" if bool(normalized["approved"]) else "false"
+            normalized["approved"] = bool(normalized["approved"])
         task.data.update(normalized)
         # Ensure gateway conditions can see the variables
         workflow.data.update(normalized)
