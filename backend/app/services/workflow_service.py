@@ -114,17 +114,21 @@ class WorkflowService:
     def complete_user_task(instance_id: str, task_id: str, data: dict) -> dict:
         instance = WorkflowService.get_instance(instance_id)
         workflow = instance.workflow
-        # Locate task by matching id as string (handles int or UUID ids)
-        task: Task | None = next(
-            (t for t in workflow.get_tasks() if str(t.id) == str(task_id)),
-            None,
-        )
+        # Locate task: prefer direct lookup by id, fallback to string match
+        task: Task | None = None
+        try:
+            task = workflow.get_task_from_id(int(task_id))
+        except Exception:
+            task = next(
+                (t for t in workflow.get_tasks() if str(t.id) == str(task_id)),
+                None,
+            )
         if task is None:
             raise KeyError("Task not found")
         if task.state != TaskState.READY:
             raise ValueError("Task is not ready")
         task.data.update(data or {})
-        workflow.complete_task(task)
+        task.complete()
         workflow.do_engine_steps()
         return instance.to_dict()
 
