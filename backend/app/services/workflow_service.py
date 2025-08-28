@@ -22,7 +22,7 @@ class WorkflowInstance:
             "ready_user_tasks": [
                 {
                     "id": str(task.id),
-                    "name": task.get_name(),
+                    "name": task.task_spec.name,
                     "spec_name": task.task_spec.name,
                 }
                 for task in WorkflowService.get_ready_user_tasks(self.workflow)
