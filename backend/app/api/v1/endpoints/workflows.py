@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Any, Dict, List, Optional
 
 from app.services.workflow_service import WorkflowService
 
@@ -15,7 +14,10 @@ class StartWorkflowRequest(BaseModel):
 
 
 class CompleteTaskRequest(BaseModel):
-    data: Dict[str, Any] = Field(default_factory=dict)
+    class ApprovalData(BaseModel):
+        approved: bool
+
+    data: ApprovalData
 
 
 @router.post("/start", summary="Start a new workflow instance")
@@ -40,7 +42,11 @@ async def list_workflows():
 @router.post("/{instance_id}/tasks/{task_id}/complete", summary="Complete a user task")
 async def complete_task(instance_id: str, task_id: int, payload: CompleteTaskRequest):
     try:
-        return WorkflowService.complete_user_task(instance_id, task_id, payload.data)
+        return WorkflowService.complete_user_task(
+            instance_id,
+            task_id,
+            payload.data.model_dump(),
+        )
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
