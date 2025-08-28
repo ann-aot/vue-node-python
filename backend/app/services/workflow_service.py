@@ -61,7 +61,9 @@ class WorkflowService:
             return WorkflowService._spec_cache[cache_key]
         parser = WorkflowService._get_parser()
         path = WorkflowService._get_bpmn_path(bpmn_filename)
-        spec = parser.parse(str(path), process_id)
+        # SpiffWorkflow 3.x: register BPMN file, then get spec by process id
+        parser.add_bpmn_file(str(path))
+        spec = parser.get_spec(process_id)
         WorkflowService._spec_cache[cache_key] = spec
         return spec
 
