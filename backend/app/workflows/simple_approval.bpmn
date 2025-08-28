@@ -16,7 +16,7 @@
     <sequenceFlow id="flow_start_to_task" sourceRef="start" targetRef="approval_task" />
     <sequenceFlow id="flow_task_to_gateway" sourceRef="approval_task" targetRef="gateway" />
     <sequenceFlow id="flow_gateway_to_approved" sourceRef="gateway" targetRef="approved_end">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${data.get('approved', False)}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow_gateway_to_rejected" sourceRef="gateway" targetRef="rejected_end" />
   </process>
