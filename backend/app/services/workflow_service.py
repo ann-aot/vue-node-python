@@ -128,6 +128,8 @@ class WorkflowService:
         if task.state != TaskState.READY:
             raise ValueError("Task is not ready")
         task.data.update(data or {})
+        # Ensure gateway conditions can see the variables
+        workflow.data.update(data or {})
         task.complete()
         workflow.do_engine_steps()
         return instance.to_dict()
