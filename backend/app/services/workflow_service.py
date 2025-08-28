@@ -112,11 +112,16 @@ class WorkflowService:
         return [t for t in tasks if is_user_task(t)]
 
     @staticmethod
-    def complete_user_task(instance_id: str, task_id: int, data: dict) -> dict:
+    def complete_user_task(instance_id: str, task_id: str, data: dict) -> dict:
         instance = WorkflowService.get_instance(instance_id)
         workflow = instance.workflow
+        # Task IDs in SpiffWorkflow are integers; convert if necessary
+        try:
+            numeric_task_id = int(task_id)
+        except (TypeError, ValueError):
+            raise KeyError("Task not found")
         task: Optional[Task] = next(
-            (t for t in workflow.get_tasks() if t.id == task_id),
+            (t for t in workflow.get_tasks() if t.id == numeric_task_id),
             None,
         )
         if task is None:
@@ -124,7 +129,7 @@ class WorkflowService:
         if task.state != TaskState.READY:
             raise ValueError("Task is not ready")
         task.data.update(data or {})
-        workflow.complete_task_from_id(task_id)
+        workflow.complete_task_from_id(numeric_task_id)
         workflow.do_engine_steps()
         return instance.to_dict()
 

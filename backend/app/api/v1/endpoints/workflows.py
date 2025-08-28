@@ -39,8 +39,15 @@ async def list_workflows():
     return WorkflowService.list_workflows()
 
 
-@router.post("/{instance_id}/tasks/{task_id}/complete", summary="Complete a user task")
-async def complete_task(instance_id: str, task_id: int, payload: CompleteTaskRequest):
+@router.post(
+    "/{instance_id}/tasks/{task_id}/complete",
+    summary="Complete a user task",
+)
+async def complete_task(
+    instance_id: str,
+    task_id: str,
+    payload: CompleteTaskRequest,
+):
     try:
         return WorkflowService.complete_user_task(
             instance_id,
