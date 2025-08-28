@@ -124,7 +124,7 @@ class WorkflowService:
         if task.state != TaskState.READY:
             raise ValueError("Task is not ready")
         task.data.update(data or {})
-        workflow.complete_task_from_id(task.id)
+        workflow.complete_task(task)
         workflow.do_engine_steps()
         return instance.to_dict()
 
