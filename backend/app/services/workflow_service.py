@@ -106,7 +106,17 @@ class WorkflowService:
 
     @staticmethod
     def get_ready_user_tasks(workflow: BpmnWorkflow) -> list[Task]:
-        tasks: list[Task] = workflow.get_tasks(state=TaskState.READY)
+        # Ensure waiting tasks are refreshed before we query states
+        if hasattr(workflow, "refresh_waiting_tasks"):
+            workflow.refresh_waiting_tasks()
+        if hasattr(workflow, "update_waiting_tasks"):
+            workflow.update_waiting_tasks()
+        # Include tasks that are waiting or ready for user action
+        tasks_ready: list[Task] = workflow.get_tasks(state=TaskState.READY)
+        tasks_waiting: list[Task] = workflow.get_tasks(state=TaskState.WAITING)
+        tasks: list[Task] = tasks_ready + [
+            t for t in tasks_waiting if t not in tasks_ready
+        ]
         # Identify BPMN User Tasks by bpmn_name or class name heuristic
         def is_user_task(t: Task) -> bool:
             name = getattr(t.task_spec, "bpmn_name", "")
