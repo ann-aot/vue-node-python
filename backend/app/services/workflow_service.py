@@ -58,11 +58,18 @@ class WorkflowService:
     @staticmethod
     def load_spec(bpmn_filename: str, process_id: str):
         cache_key = f"{bpmn_filename}::{process_id}"
+        # Return from cache if present
+        if cache_key in WorkflowService._spec_cache:
+            return WorkflowService._spec_cache[cache_key]
         parser = WorkflowService._get_parser()
         path = WorkflowService._get_bpmn_path(bpmn_filename)
-        # SpiffWorkflow 3.x: register BPMN file, then get spec by process id
-        parser.add_bpmn_file(str(path))
-        spec = parser.get_spec(process_id)
+        # First try to fetch an existing spec in the parser
+        try:
+            spec = parser.get_spec(process_id)
+        except Exception:
+            # Not loaded yet: register BPMN file, then get spec by process id
+            parser.add_bpmn_file(str(path))
+            spec = parser.get_spec(process_id)
         WorkflowService._spec_cache[cache_key] = spec
         return spec
 
