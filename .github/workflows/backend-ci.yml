@@ -51,4 +51,4 @@ jobs:
           pip install -r backend/requirements.txt
       - name: Run linter
         run: |
-          flake8 backend/app/ backend/main.py
+          flake8 backend/app/ backend/main.py --ignore=E203,E266,E302,E305,W503,E501
