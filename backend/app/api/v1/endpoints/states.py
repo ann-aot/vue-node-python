@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
 from app.database import get_db
 from app.schemas.state import StateCreate, StateUpdate, StateResponse
 from app.services.state_service import StateService
@@ -8,7 +7,7 @@ from app.services.state_service import StateService
 router = APIRouter()
 
 
-@router.get("/", response_model=List[StateResponse], summary="Get all states")
+@router.get("/", response_model=list[StateResponse], summary="Get all states")
 async def get_states(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100,
@@ -27,10 +26,11 @@ async def get_states(
     return states
 
 
-@router.get("/active",
-            response_model=List[StateResponse],
-            summary="Get active states"
-            )
+@router.get(
+    "/active",
+    response_model=list[StateResponse],
+    summary="Get active states",
+)
 async def get_active_states(db: Session = Depends(get_db)):
     """
     Retrieve all active states, ordered by sort_order.

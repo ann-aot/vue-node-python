@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from typing import List, Optional
 from app.models.state import State
 from app.schemas.state import StateCreate, StateUpdate
 from fastapi import HTTPException
@@ -8,10 +7,11 @@ from fastapi import HTTPException
 
 class StateService:
     @staticmethod
-    def get_states(db: Session,
-                   skip: int = 0,
-                   limit: int = 100
-                   ) -> List[State]:
+    def get_states(
+        db: Session,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> list[State]:
         """Get all states with pagination, ordered by sort_order"""
         return (
             db.query(State)
@@ -22,17 +22,17 @@ class StateService:
         )
 
     @staticmethod
-    def get_state_by_id(db: Session, state_id: int) -> Optional[State]:
+    def get_state_by_id(db: Session, state_id: int) -> State | None:
         """Get state by ID"""
         return db.query(State).filter(State.id == state_id).first()
 
     @staticmethod
-    def get_state_by_name(db: Session, name: str) -> Optional[State]:
+    def get_state_by_name(db: Session, name: str) -> State | None:
         """Get state by name"""
         return db.query(State).filter(State.name == name).first()
 
     @staticmethod
-    def get_active_states(db: Session) -> List[State]:
+    def get_active_states(db: Session) -> list[State]:
         """Get all active states, ordered by sort_order"""
         return (
             db.query(State)
