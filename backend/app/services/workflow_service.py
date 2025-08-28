@@ -156,9 +156,13 @@ class WorkflowService:
                 pass
             if task.state != TaskState.READY:
                 raise ValueError("Task is not ready")
-        task.data.update(data or {})
+        # Normalize approved flag to a string ('true'/'false') for expression
+        normalized: dict = dict(data or {})
+        if "approved" in normalized:
+            normalized["approved"] = "true" if bool(normalized["approved"]) else "false"
+        task.data.update(normalized)
         # Ensure gateway conditions can see the variables
-        workflow.data.update(data or {})
+        workflow.data.update(normalized)
         task.complete()
         workflow.do_engine_steps()
         return instance.to_dict()
