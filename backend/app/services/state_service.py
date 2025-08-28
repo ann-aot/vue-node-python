@@ -65,10 +65,11 @@ class StateService:
             )
 
     @staticmethod
-    def update_state(db: Session,
-                     state_id: int,
-                     state_update: StateUpdate
-                     ) -> State:
+    def update_state(
+        db: Session,
+        state_id: int,
+        state_update: StateUpdate,
+    ) -> State:
         """Update an existing state"""
         db_state = StateService.get_state_by_id(db, state_id)
         if not db_state:
@@ -117,7 +118,7 @@ class StateService:
             )
 
     @staticmethod
-    def initialize_default_states(db: Session) -> List[State]:
+    def initialize_default_states(db: Session) -> list[State]:
         """Initialize default states if they don't exist"""
         default_states = [
             {"name": "New",
