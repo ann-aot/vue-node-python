@@ -32,7 +32,9 @@ class WorkflowInstance:
     def _status(self) -> str:
         if self.workflow.is_completed():
             return "COMPLETED"
-        if self.workflow.is_cancelled():
+        # SpiffWorkflow 3.x uses American spelling
+        is_canceled = getattr(self.workflow, "is_canceled", None)
+        if callable(is_canceled) and is_canceled():
             return "CANCELLED"
         return "RUNNING"
 
