@@ -119,7 +119,9 @@ class WorkflowService:
         try:
             numeric_task_id = int(task_id)
         except (TypeError, ValueError):
-            raise KeyError("Task not found")
+            raise ValueError(
+                "task_id must be the integer id from ready_user_tasks.id"
+            )
         task: Optional[Task] = next(
             (t for t in workflow.get_tasks() if t.id == numeric_task_id),
             None,
