@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class StartWorkflowRequest(BaseModel):
-    name: str = Field(default="Simple Approval")
-    bpmn_filename: str = Field(default="simple_approval.bpmn")
-    process_id: str = Field(default="SimpleApproval")
+    name: Optional[str] = Field(default=None)
+    bpmn_filename: Optional[str] = Field(default=None)
+    process_id: Optional[str] = Field(default=None)
 
 
 class CompleteTaskRequest(BaseModel):
