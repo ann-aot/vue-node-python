@@ -1,0 +1,12 @@
+{
+  "pageTitle": "CHEFS Vue Template Home Page",
+  "logos": {
+    "vite": "Vite logo",
+    "vue": "Vue logo"
+  },
+  "helloMessage": "Vite + Vue",
+  "countButton": {
+    "initialText": "count is 0",
+    "afterClickText": "count is 1"
+  }
+}
