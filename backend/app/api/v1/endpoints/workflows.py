@@ -1,23 +1,13 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
 
 from app.services.workflow_service import WorkflowService
+from app.schemas.workflow import StartWorkflowRequest, CompleteTaskRequest
 
 
 router = APIRouter()
 
 
-class StartWorkflowRequest(BaseModel):
-    name: str = Field(default="Simple Approval")
-    bpmn_filename: str = Field(default="simple_approval.bpmn")
-    process_id: str = Field(default="SimpleApproval")
-
-
-class CompleteTaskRequest(BaseModel):
-    class ApprovalData(BaseModel):
-        approved: bool
-
-    data: ApprovalData
+ 
 
 
 @router.post("/start", summary="Start a new workflow instance")
