@@ -1,0 +1,43 @@
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+# Exclude Alembic files from type checking
+exclude = [
+    "alembic/.*",
+]
+
+# Ignore missing imports for Alembic
+[[tool.mypy.overrides]]
+module = "alembic.*"
+ignore_missing_imports = true
+
+# Ignore specific Alembic attributes
+[[tool.mypy.overrides]]
+module = "alembic"
+ignore_errors = [
+    "Module 'alembic' has no attribute 'op'",
+    "Module 'alembic' has no attribute 'context'",
+]
+
+[tool.black]
+line-length = 150
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 150
+
+[tool.flake8]
+max-line-length = 150

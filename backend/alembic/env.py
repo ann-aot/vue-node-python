@@ -1,19 +1,18 @@
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from alembic import context
 import os
 import sys
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context  # type: ignore[attr-defined]
+from app.database import Base
 
 # Add the app directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from app.database import Base
-from app.models import state
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = context.config
+config = context.config  # type: ignore[attr-defined]
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -29,6 +28,8 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+SQLALCHEMY_URL = "sqlalchemy.url"
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -42,16 +43,16 @@ def run_migrations_offline() -> None:
     to a script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
-    context.configure(
+    url = config.get_main_option(SQLALCHEMY_URL)
+    context.configure(  # type: ignore[attr-defined]
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
 
-    with context.begin_transaction():
-        context.run_migrations()
+    with context.begin_transaction():  # type: ignore[attr-defined]
+        context.run_migrations()  # type: ignore[attr-defined]
 
 
 def run_migrations_online() -> None:
@@ -62,24 +63,22 @@ def run_migrations_online() -> None:
 
     """
     # Override the URL from environment variable if available
-    database_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    
+    database_url = os.getenv("DATABASE_URL", config.get_main_option(SQLALCHEMY_URL))  # type: ignore[attr-defined]
+
     connectable = engine_from_config(
-        {"sqlalchemy.url": database_url},
+        {SQLALCHEMY_URL: database_url},
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)  # type: ignore[attr-defined]
 
-        with context.begin_transaction():
-            context.run_migrations()
+        with context.begin_transaction():  # type: ignore[attr-defined]
+            context.run_migrations()  # type: ignore[attr-defined]
 
 
-if context.is_offline_mode():
+if context.is_offline_mode():  # type: ignore[attr-defined]
     run_migrations_offline()
 else:
-    run_migrations_online() 
+    run_migrations_online()

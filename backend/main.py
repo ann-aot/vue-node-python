@@ -1,7 +1,8 @@
+import os
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-import os
 
 from app.api.v1.api import api_router
 
@@ -11,7 +12,7 @@ app = FastAPI(
     description="A modern FastAPI boilerplate and PostgreSQL integration",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Add CORS middleware
@@ -33,7 +34,7 @@ async def root():
         "message": "Welcome to FastAPI Boilerplate with PostgreSQL!",
         "status": "running",
         "docs": "/docs",
-        "api": "/api/v1"
+        "api": "/api/v1",
     }
 
 
@@ -42,8 +43,9 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "FastAPI Boilerplate with PostgreSQL",
-        "database": "connected (migrations handled by Alembic)"
+        "database": "connected (migrations handled by Alembic)",
     }
+
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8300))

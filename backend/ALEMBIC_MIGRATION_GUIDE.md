@@ -82,7 +82,7 @@ from app.database import Base
 
 class NewTable(Base):
     __tablename__ = "new_table"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -196,7 +196,7 @@ CREATE TABLE states (
    ```bash
    # Check logs
    docker-compose logs api
-   
+
    # Check database connection
    docker exec -it fastapi-postgres psql -U fastapi_user -d fastapi_db
    ```
@@ -205,7 +205,7 @@ CREATE TABLE states (
    ```bash
    # Check migration status
    docker exec -it fastapi-app alembic current
-   
+
    # Run migrations manually
    docker exec -it fastapi-app alembic upgrade head
    ```
@@ -214,7 +214,7 @@ CREATE TABLE states (
    ```bash
    # Check PostgreSQL health
    docker-compose ps
-   
+
    # Restart services
    docker-compose down && docker-compose up --build
    ```
@@ -255,4 +255,4 @@ open http://localhost:8300/docs
 - Modify existing columns with `op.alter_column()`
 - Drop columns with `op.drop_column()`
 
-Your FastAPI application now follows **best practices** for database migrations and will automatically handle schema updates when deployed! 🎉 
+Your FastAPI application now follows **best practices** for database migrations and will automatically handle schema updates when deployed! 🎉

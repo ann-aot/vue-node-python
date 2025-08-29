@@ -102,7 +102,7 @@ backend/
    ```bash
    # Windows
    set DATABASE_URL=postgresql://fastapi_user:fastapi_password@localhost:7432/fastapi_db
-   
+
    # Unix/Linux/Mac
    export DATABASE_URL=postgresql://fastapi_user:fastapi_password@localhost:7432/fastapi_db
    ```
@@ -309,10 +309,10 @@ SELECT * FROM states;
    ```bash
    # Check if PostgreSQL is running
    docker-compose ps
-   
+
    # Check database logs
    docker-compose logs postgres
-   
+
    # Restart services
    docker-compose restart
    ```
@@ -322,7 +322,7 @@ SELECT * FROM states;
    # Find process using port 8300
    netstat -ano | findstr :8300  # Windows
    lsof -i :8300                 # Linux/Mac
-   
+
    # Kill process
    taskkill /PID <PID>           # Windows
    kill <PID>                     # Linux/Mac
@@ -333,7 +333,7 @@ SELECT * FROM states;
    # Check if port 7432 is available
    netstat -ano | findstr :7432  # Windows
    lsof -i :7432                 # Linux/Mac
-   
+
    # If port 7432 is in use, you can change it in docker-compose.yml
    # Change "7432:5432" to another port like "7433:5432"
    ```
@@ -342,7 +342,7 @@ SELECT * FROM states;
    ```bash
    # Clean Docker cache
    docker system prune -a
-   
+
    # Rebuild without cache
    docker-compose build --no-cache
    ```
@@ -351,10 +351,10 @@ SELECT * FROM states;
    ```bash
    # Check migration status
    docker exec -it fastapi-app alembic current
-   
+
    # View migration history
    docker exec -it fastapi-app alembic history
-   
+
    # Reset migrations (careful!)
    docker exec -it fastapi-app alembic downgrade base
    ```

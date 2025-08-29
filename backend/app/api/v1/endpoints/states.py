@@ -1,8 +1,10 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+
 from app.database import get_db
-from app.schemas.state import StateCreate, StateUpdate, StateResponse
+from app.schemas.state import StateCreate, StateResponse, StateUpdate
 from app.services.state_service import StateService
 
 router = APIRouter()
@@ -11,12 +13,8 @@ router = APIRouter()
 @router.get("/", response_model=List[StateResponse], summary="Get all states")
 async def get_states(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
-    limit: int = Query(100,
-                       ge=1,
-                       le=1000,
-                       description="Maximum number of records to return"
-                       ),
-    db: Session = Depends(get_db)
+    limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
+    db: Session = Depends(get_db),
 ):
     """
     Retrieve all states with pagination support, ordered by sort_order.
@@ -27,10 +25,7 @@ async def get_states(
     return states
 
 
-@router.get("/active",
-            response_model=List[StateResponse],
-            summary="Get active states"
-            )
+@router.get("/active", response_model=List[StateResponse], summary="Get active states")
 async def get_active_states(db: Session = Depends(get_db)):
     """
     Retrieve all active states, ordered by sort_order.
@@ -39,14 +34,8 @@ async def get_active_states(db: Session = Depends(get_db)):
     return states
 
 
-@router.get("/{state_id}",
-            response_model=StateResponse,
-            summary="Get state by ID"
-            )
-async def get_state(
-    state_id: int,
-    db: Session = Depends(get_db)
-):
+@router.get("/{state_id}", response_model=StateResponse, summary="Get state by ID")
+async def get_state(state_id: int, db: Session = Depends(get_db)):
     """
     Retrieve a specific state by its ID.
     - **state_id**: The unique identifier of the state
@@ -57,15 +46,8 @@ async def get_state(
     return state
 
 
-@router.post("/",
-             response_model=StateResponse,
-             status_code=201,
-             summary="Create new state"
-             )
-async def create_state(
-    state: StateCreate,
-    db: Session = Depends(get_db)
-):
+@router.post("/", response_model=StateResponse, status_code=201, summary="Create new state")
+async def create_state(state: StateCreate, db: Session = Depends(get_db)):
     """
     Create a new state.
     - **state**: State data including
@@ -77,15 +59,8 @@ async def create_state(
     return StateService.create_state(db, state)
 
 
-@router.put("/{state_id}",
-            response_model=StateResponse,
-            summary="Update state"
-            )
-async def update_state(
-    state_id: int,
-    state_update: StateUpdate,
-    db: Session = Depends(get_db)
-):
+@router.put("/{state_id}", response_model=StateResponse, summary="Update state")
+async def update_state(state_id: int, state_update: StateUpdate, db: Session = Depends(get_db)):
     """
     Update an existing state.
     - **state_id**: The unique identifier of the state to update
@@ -96,10 +71,7 @@ async def update_state(
 
 
 @router.delete("/{state_id}", summary="Delete state")
-async def delete_state(
-    state_id: int,
-    db: Session = Depends(get_db)
-):
+async def delete_state(state_id: int, db: Session = Depends(get_db)):
     """
     Delete a state.
     - **state_id**: The unique identifier of the state to delete
@@ -108,10 +80,11 @@ async def delete_state(
     return {"message": f"State {state_id} deleted successfully"}
 
 
-@router.post("/initialize",
-             response_model=List[StateResponse],
-             summary="Initialize default states"
-             )
+@router.post(
+    "/initialize",
+    response_model=List[StateResponse],
+    summary="Initialize default states",
+)
 async def initialize_default_states(db: Session = Depends(get_db)):
     """
     Initialize default states (New, In Progress, Done) if they don't exist.

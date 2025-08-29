@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, ConfigDict, field_serializer
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 class CustomBaseModel(BaseModel):
@@ -8,15 +9,8 @@ class CustomBaseModel(BaseModel):
 
 
 class StateBase(CustomBaseModel):
-    name: str = Field(...,
-                      min_length=1,
-                      max_length=50,
-                      description="State name"
-                      )
-    description: Optional[str] = Field(None,
-                                       max_length=200,
-                                       description="State description"
-                                       )
+    name: str = Field(..., min_length=1, max_length=50, description="State name")
+    description: Optional[str] = Field(None, max_length=200, description="State description")
     is_active: bool = Field(True, description="Whether the state is active")
     sort_order: int = Field(0, ge=0, description="Sort order for display")
 

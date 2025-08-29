@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
+
 from app.database import Base
 
 
@@ -15,7 +16,4 @@ class State(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self):
-        return (
-            f"<State(id={self.id}, name='{self.name}', "
-            f"sort_order={self.sort_order})>"
-        )
+        return f"<State(id={self.id}, name='{self.name}', " f"sort_order={self.sort_order})>"
