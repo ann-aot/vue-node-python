@@ -53,7 +53,7 @@ ports:
   - name: Backend
     description: Port 8300 for the backend
     port: 8300
-    onOpen: open-preview
+    onOpen: notify
     visibility: public
   - name: postgres
     description: Port 7432 for the postgres
