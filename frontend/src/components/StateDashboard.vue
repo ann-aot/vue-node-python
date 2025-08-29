@@ -31,11 +31,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
-import { useStore } from "vuex";
-import { RootState } from "@/store/types";
-import { ActionTypes } from "@/store/modules/states/actions";
-import { GetterTypes } from "@/store/modules/states/getters";
+import { defineComponent, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import type { RootState } from '@/store/types';
+import { ActionTypes } from '@/store/modules/states/actions';
+//
 
 export default defineComponent({
   name: "StateDashboard",
@@ -48,9 +48,9 @@ export default defineComponent({
     });
 
     // Map state from getters
-    const states = store.getters[`states/${GetterTypes.GET_STATES}`];
-    const loading = store.getters[`states/${GetterTypes.GET_LOADING}`];
-    const error = store.getters[`states/${GetterTypes.GET_ERROR}`];
+    const states = store.getters['states/allStates'];
+    const loading = store.getters['states/isLoading'];
+    const error = store.getters['states/errorMessage'];
 
     return {
       states,

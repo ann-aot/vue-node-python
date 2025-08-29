@@ -1,10 +1,10 @@
-import type {MutationTree} from "vuex";
-import type { StatesState, StateItem } from "./types";
+import type { MutationTree } from 'vuex';
+import type { StatesState, StateItem } from './types';
 
 export const MutationTypes = {
-  SET_LOADING: "SET_LOADING",
-  SET_STATES: "SET_STATES",
-  SET_ERROR: "SET_ERROR",
+  SET_LOADING: 'SET_LOADING',
+  SET_STATES: 'SET_STATES',
+  SET_ERROR: 'SET_ERROR',
 } as const;
 
 export const mutations: MutationTree<StatesState> = {

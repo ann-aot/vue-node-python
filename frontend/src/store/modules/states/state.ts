@@ -1,4 +1,4 @@
-import type { StatesState } from "./types";
+import type { StatesState } from './types';
 
 export const state: StatesState = {
   states: [],
