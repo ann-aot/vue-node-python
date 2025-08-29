@@ -4,7 +4,7 @@
       <!-- Logo -->
       <img src="/logo-banner.png" alt="Logo" class="logo" />
       <!-- Header text -->
-      <h1 class="header-text">State Dashboard</h1>
+      <h1 class="header-text">Vue + Python + TS</h1>
     </div>
 
     <!-- User dropdown -->
