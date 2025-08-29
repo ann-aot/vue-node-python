@@ -10,4 +10,5 @@ Give a high-level description of the changes.
 # Checklist
 - [ ] Added meaningful title for pull request
 - [ ] Unit tests pass
+- [ ] E2E tests pass
 - [ ] Linting checks pass
