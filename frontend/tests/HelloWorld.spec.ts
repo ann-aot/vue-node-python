@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/vue';
 import { describe, it, expect } from 'vitest';
 import HelloWorld from '../src/components/HelloWorld.vue';
+import '@testing-library/jest-dom';
 
 describe('HelloWorld.vue', () => {
   it('renders the correct message', () => {

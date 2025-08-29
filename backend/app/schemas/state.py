@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, ConfigDict, field_serializer
-from typing import Optional
 from datetime import datetime
 
 
@@ -13,10 +12,10 @@ class StateBase(CustomBaseModel):
                       max_length=50,
                       description="State name"
                       )
-    description: Optional[str] = Field(None,
-                                       max_length=200,
-                                       description="State description"
-                                       )
+    description: str | None = Field(None,
+                                    max_length=200,
+                                    description="State description"
+                                    )
     is_active: bool = Field(True, description="Whether the state is active")
     sort_order: int = Field(0, ge=0, description="Sort order for display")
 
@@ -26,17 +25,17 @@ class StateCreate(StateBase):
 
 
 class StateUpdate(CustomBaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=50)
-    description: Optional[str] = Field(None, max_length=200)
-    is_active: Optional[bool] = None
-    sort_order: Optional[int] = Field(None, ge=0)
+    name: str | None = Field(None, min_length=1, max_length=50)
+    description: str | None = Field(None, max_length=200)
+    is_active: bool | None = None
+    sort_order: int | None = Field(None, ge=0)
 
 
 class StateResponse(StateBase):
     id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     @field_serializer("created_at", "updated_at", when_used="json")
-    def serialize_dt(self, dt: Optional[datetime]) -> Optional[str]:
+    def serialize_dt(self, dt: datetime | None) -> str | None:
         return dt.isoformat() if dt else None
