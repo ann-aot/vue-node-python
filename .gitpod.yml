@@ -16,6 +16,8 @@ tasks:
   - name: backend
     init: |
       cd docker
+      echo -e  "\nALLOWED_ORIGINS=\"['$(gp url 4000)']\"" >> .env
+      echo -e  "\nALLOWED_ORIGINS=\"['$(gp url 4000)']\""
       echo 'Building backend container'
       docker-compose build backend
       echo 'Built backend'
@@ -32,6 +34,8 @@ tasks:
       cp .env-gitpod .env
       eval $(gp env -e)
       export VITE_API_BASE_URL=$(gp url 8300)
+      echo "VITE_API_BASE_URL=$(gp url 8300)" >> ../web/.env
+      echo "VITE_API_BASE_URL=$(gp url 8300)"
       echo 'Building frontend container'
       docker-compose build frontend
       echo 'Built frontend'
