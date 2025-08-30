@@ -2,7 +2,7 @@ import type { ActionTree, ActionContext } from 'vuex';
 import type { StatesState } from './types';
 import type { RootState } from '../../types';
 import { MutationTypes } from './mutations';
-import axios from 'axios';
+import apiClient from '../../../plugins/axios';
 import { API_BASE } from '../../../constants';
 
 export const ActionTypes = {
@@ -16,7 +16,9 @@ export const actions: ActionTree<StatesState, RootState> = {
     commit(MutationTypes.SET_ERROR, null);
     try {
       console.log('API_BASE:', API_BASE);
-      const res = await axios.get(`${API_BASE}/states`);
+      const fullUrl = `${API_BASE}/states`;
+      console.log('Full URL being requested:', fullUrl);
+      const res = await apiClient.get(fullUrl);
       commit(MutationTypes.SET_STATES, res.data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to fetch states';

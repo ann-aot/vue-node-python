@@ -12,7 +12,17 @@ let baseUrl =
 
 // Force HTTPS for Gitpod environment to prevent mixed content errors
 if (window.location.hostname.includes('gitpod.io') && baseUrl.startsWith('http://')) {
-  console.log('Forcing HTTPS for Gitpod environment');
+  console.log('Forcing HTTPS for Gitpod environment in constants');
+  baseUrl = baseUrl.replace('http://', 'https://');
+}
+
+// Additional safety check: ensure Gitpod URLs are always HTTPS
+if (
+  window.location.hostname.includes('gitpod.io') &&
+  baseUrl.includes('gitpod.io') &&
+  !baseUrl.startsWith('https://')
+) {
+  console.log('Additional safety: forcing HTTPS for Gitpod URL');
   baseUrl = baseUrl.replace('http://', 'https://');
 }
 
