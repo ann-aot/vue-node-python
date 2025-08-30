@@ -28,24 +28,18 @@ tasks:
       docker-compose up -d backend
       echo 'Started backend'
   - name: frontend
-    init: |
+    command: |
+      gp await-port 8300
       cd docker
       echo 'Copying .env-gitpod to .env'
       cp .env-gitpod .env
-      eval $(gp env -e)
-      export VITE_API_BASE_URL=$(gp url 8300)
       echo "VITE_API_BASE_URL=$(gp url 8300)" >> .env
-      echo "VITE_API_BASE_URL=$(gp url 8300)"
+      echo "Using API URL: $(gp url 8300)"
       echo 'Building frontend container'
-      docker-compose build frontend
+      VITE_API_BASE_URL=$(gp url 8300) docker-compose build frontend
       echo 'Built frontend'
-    command: |
-      gp await-port 8300
-      eval $(gp env -e)
-      export VITE_API_BASE_URL=$(gp url 8300)
-      cd docker
       echo 'Starting frontend container'
-      docker-compose up -d frontend
+      VITE_API_BASE_URL=$(gp url 8300) docker-compose up -d frontend
       echo 'Started frontend'
 
 ports:
