@@ -22,20 +22,18 @@ export default [
     plugins: {
       vue,
       '@typescript-eslint': typescript,
-      prettier
+      prettier,
     },
     rules: {
-
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
 
       // General rules
-      'no-console': 'error',
+      'no-console': 'off',
       'no-debugger': 'error',
       // Prettier integration
-      'prettier/prettier': 'error', 
-
+      'prettier/prettier': 'error',
     },
   },
 ];
