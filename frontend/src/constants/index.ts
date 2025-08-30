@@ -2,13 +2,19 @@
 // VITE_API_BASE_URL should contain just the base URL (e.g., https://8300-workspace.gitpod.io)
 // The /api/v1 path is automatically appended here
 
-const baseUrl =
+let baseUrl =
   import.meta.env.VITE_API_BASE_URL ||
   (window.location.hostname.includes('gitpod.io')
     ? window.location.origin.replace('4000-', '8300-').replace(':4000', ':8300')
     : window.location.protocol === 'https:'
       ? 'https://localhost:8300'
       : 'http://localhost:8300');
+
+// Force HTTPS for Gitpod environment to prevent mixed content errors
+if (window.location.hostname.includes('gitpod.io') && baseUrl.startsWith('http://')) {
+  console.log('Forcing HTTPS for Gitpod environment');
+  baseUrl = baseUrl.replace('http://', 'https://');
+}
 
 export const API_BASE = baseUrl + '/api/v1';
 
@@ -19,3 +25,4 @@ console.log('Current origin:', window.location.origin);
 console.log('Current protocol:', window.location.protocol);
 console.log('Computed base URL:', baseUrl);
 console.log('Final API_BASE:', API_BASE);
+console.log('Is Gitpod environment:', window.location.hostname.includes('gitpod.io'));
