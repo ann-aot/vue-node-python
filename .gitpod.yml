@@ -16,12 +16,19 @@ tasks:
   - name: backend
     init: |
       cd docker
+      # Set ALLOWED_ORIGINS for backend CORS
+      echo "ALLOWED_ORIGINS=\"['$(gp url 4000)']\"" >> .env
+      echo "ALLOWED_ORIGINS set to: ['$(gp url 4000)']"
       echo 'Building backend container'
       docker-compose build backend
       echo 'Built backend'
     command: |
       gp await-port 7432
       cd docker
+      # Ensure ALLOWED_ORIGINS is set for backend CORS
+      sed -i '/ALLOWED_ORIGINS/d' .env
+      echo "ALLOWED_ORIGINS=\"['$(gp url 4000)']\"" >> .env
+      echo "ALLOWED_ORIGINS set to: ['$(gp url 4000)']"
       echo 'Starting backend container'
       docker-compose up -d backend
       echo 'Started backend'
@@ -31,14 +38,23 @@ tasks:
       echo 'Copying .env-gitpod to .env'
       cp .env-gitpod .env
       eval $(gp env -e)
-      export VITE_API_BASE_URL=$(gp url 8300)
+      # Set VITE_API_BASE_URL for Gitpod environment (include /api/v1 path)
+      export VITE_API_BASE_URL="$(gp url 8300)/api/v1"
+      # Update the .env file with the Gitpod URL
+      sed -i '/VITE_API_BASE_URL/d' .env
+      echo "VITE_API_BASE_URL=$(gp url 8300)/api/v1" >> .env
+      echo "VITE_API_BASE_URL set to: $(gp url 8300)/api/v1"
       echo 'Building frontend container'
       docker-compose build frontend
       echo 'Built frontend'
     command: |
       gp await-port 8300
       eval $(gp env -e)
-      export VITE_API_BASE_URL=$(gp url 8300)
+      export VITE_API_BASE_URL="$(gp url 8300)/api/v1"
+      # Ensure the .env file has the latest Gitpod URL
+      sed -i '/VITE_API_BASE_URL/d' .env
+      echo "VITE_API_BASE_URL=$(gp url 8300)/api/v1" >> .env
+      echo "VITE_API_BASE_URL set to: $(gp url 8300)/api/v1"
       cd docker
       echo 'Starting frontend container'
       docker-compose up -d frontend

@@ -4,14 +4,14 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3000}
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8300/api/v1}
     container_name: app-frontend
     # depends_on:
     #   - backend
     env_file:
       - ./.env
     environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3000}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8300/api/v1}
     ports:
       - "${FRONTEND_HTTP_PORT:-4000}:80"
     restart: unless-stopped
@@ -38,7 +38,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-  
+
   postgres:
     image: postgres:15-alpine
     container_name: fastapi-postgres
