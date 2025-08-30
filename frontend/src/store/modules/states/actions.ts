@@ -15,7 +15,7 @@ export const actions: ActionTree<StatesState, RootState> = {
     commit(MutationTypes.SET_LOADING, true);
     commit(MutationTypes.SET_ERROR, null);
     try {
-      const res = await axios.get(`${API_BASE}/states`);
+      const res = await axios.get(`${API_BASE}/states/`);
       commit(MutationTypes.SET_STATES, res.data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to fetch states';
