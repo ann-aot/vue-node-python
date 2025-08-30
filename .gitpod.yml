@@ -34,7 +34,7 @@ tasks:
       cp .env-gitpod .env
       eval $(gp env -e)
       export VITE_API_BASE_URL=$(gp url 8300)
-      echo "VITE_API_BASE_URL=$(gp url 8300)" >> ../web/.env
+      echo "VITE_API_BASE_URL=$(gp url 8300)" >> .env
       echo "VITE_API_BASE_URL=$(gp url 8300)"
       echo 'Building frontend container'
       docker-compose build frontend
