@@ -38,7 +38,7 @@ tasks:
       cp .env-gitpod .env
       eval $(gp env -e)
       # Ensure VITE_API_BASE_URL is set correctly for the build
-      export VITE_API_BASE_URL=$(gp url 8300)
+      export VITE_API_BASE_URL="$(gp url 8300)"
       # Remove any existing VITE_API_BASE_URL entries and add the correct one
       sed -i '/VITE_API_BASE_URL/d' .env
       echo "VITE_API_BASE_URL=$(gp url 8300)" >> .env
@@ -48,12 +48,12 @@ tasks:
       echo "Current VITE_API_BASE_URL: $VITE_API_BASE_URL"
       echo 'Building frontend container'
       # Pass the environment variable explicitly to docker-compose build
-      VITE_API_BASE_URL=$(gp url 8300) docker-compose build frontend
+      VITE_API_BASE_URL="$(gp url 8300)" docker-compose build frontend
       echo 'Built frontend'
     command: |
       gp await-port 8300
       eval $(gp env -e)
-      export VITE_API_BASE_URL=$(gp url 8300)
+      export VITE_API_BASE_URL="$(gp url 8300)"
       cd docker
       echo 'Starting frontend container'
       docker-compose up -d frontend
