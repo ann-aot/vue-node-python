@@ -1,8 +1,8 @@
 import os
-from typing import Any
+from typing import Any, Callable
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -35,7 +35,7 @@ def get_secure_config() -> list[str]:
     return trusted_hosts
 
 
-trusted_hosts = get_secure_config()
+trusted_hosts: list[str] = get_secure_config()
 print(f"Configured trusted hosts: {trusted_hosts}")
 
 # Add TrustedHost middleware with secure hosts
@@ -69,7 +69,7 @@ def get_secure_origins() -> list[str]:
     return valid_origins
 
 
-origins = get_secure_origins()
+origins: list[str] = get_secure_origins()
 print(f"Configured CORS origins: {origins}")
 
 # Add CORS middleware with secure origins
@@ -82,27 +82,33 @@ app.add_middleware(
 )
 
 # Simple rate limiting storage (in production, use Redis or similar)
-request_counts: dict[str, int] = {}
+# Stores IP addresses mapped to lists of request timestamps
+request_counts: dict[str, list[float]] = {}
 
 
 # Add security headers and rate limiting middleware
 @app.middleware("http")
-async def add_security_and_rate_limiting(request: Request, call_next) -> JSONResponse | Any:
+async def add_security_and_rate_limiting(request: Request, call_next: Callable[[Request], Any]) -> Response | JSONResponse:
+    global request_counts
+
     # Rate limiting: allow max 100 requests per minute per IP
-    client_ip = request.client.host if request.client else "unknown"
-    current_time = time.time()
-    minute_ago = current_time - 60
+    client_ip: str = request.client.host if request.client else "unknown"
+    current_time: float = time.time()
+    minute_ago: float = current_time - 60
 
-    # Clean old entries
-    request_counts = {ip: timestamp for ip, timestamp in request_counts.items() if timestamp > minute_ago}
+    # Clean old entries and count requests for this IP
+    if client_ip not in request_counts:
+        request_counts[client_ip] = []
 
-    # Count requests for this IP
-    if client_ip in request_counts:
-        if request_counts[client_ip] > 100:
-            return JSONResponse(status_code=429, content={"detail": "Too many requests. Rate limit exceeded."})
-        request_counts[client_ip] += 1
-    else:
-        request_counts[client_ip] = 1
+    # Remove timestamps older than 1 minute
+    request_counts[client_ip] = [ts for ts in request_counts[client_ip] if ts > minute_ago]
+
+    # Check if rate limit exceeded
+    if len(request_counts[client_ip]) >= 100:
+        return JSONResponse(status_code=429, content={"detail": "Too many requests. Rate limit exceeded."})
+
+    # Add current request timestamp
+    request_counts[client_ip].append(current_time)
 
     response = await call_next(request)
 
