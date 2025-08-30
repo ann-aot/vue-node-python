@@ -37,23 +37,25 @@ tasks:
       echo 'Copying .env-gitpod to .env'
       cp .env-gitpod .env
       eval $(gp env -e)
-      # Ensure VITE_API_BASE_URL is set correctly for the build
-      export VITE_API_BASE_URL="$(gp url 8300)"
+      # Ensure VITE_API_BASE_URL is set correctly for the build (force HTTPS)
+      export VITE_API_BASE_URL="$(gp url 8300 | sed 's/^http:/https:/')"
       # Remove any existing VITE_API_BASE_URL entries and add the correct one
       sed -i '/VITE_API_BASE_URL/d' .env
-      echo "VITE_API_BASE_URL=$(gp url 8300)" >> .env
-      echo "VITE_API_BASE_URL=$(gp url 8300)"
+      echo "VITE_API_BASE_URL=$(gp url 8300 | sed 's/^http:/https:/')" >> .env
+      echo "VITE_API_BASE_URL=$(gp url 8300 | sed 's/^http:/https:/')"
       # Verify the environment variable is set correctly
+      echo "Raw gp url output: $(gp url 8300)"
+      echo "Processed VITE_API_BASE_URL: $(gp url 8300 | sed 's/^http:/https:/')"
       echo "Verifying VITE_API_BASE_URL in .env: $(grep VITE_API_BASE_URL .env)"
       echo "Current VITE_API_BASE_URL: $VITE_API_BASE_URL"
       echo 'Building frontend container'
-      # Pass the environment variable explicitly to docker-compose build
-      VITE_API_BASE_URL="$(gp url 8300)" docker-compose build frontend
+      # Pass the environment variable explicitly to docker-compose build (force HTTPS)
+      VITE_API_BASE_URL="$(gp url 8300 | sed 's/^http:/https:/')" docker-compose build frontend
       echo 'Built frontend'
     command: |
       gp await-port 8300
       eval $(gp env -e)
-      export VITE_API_BASE_URL="$(gp url 8300)"
+      export VITE_API_BASE_URL="$(gp url 8300 | sed 's/^http:/https:/')"
       cd docker
       echo 'Starting frontend container'
       docker-compose up -d frontend
