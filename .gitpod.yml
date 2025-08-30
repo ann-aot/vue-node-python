@@ -1,5 +1,9 @@
 image: gitpod/workspace-full:latest
 
+# Set environment variables for the entire workspace
+env:
+  GITPOD_WORKSPACE_ID: $GITPOD_WORKSPACE_ID
+
 tasks:
   - name: infrastructure
     before: |
@@ -28,18 +32,31 @@ tasks:
       docker-compose up -d backend
       echo 'Started backend'
   - name: frontend
-    command: |
-      gp await-port 8300
+    init: |
       cd docker
       echo 'Copying .env-gitpod to .env'
       cp .env-gitpod .env
+      eval $(gp env -e)
+      # Ensure VITE_API_BASE_URL is set correctly for the build
+      export VITE_API_BASE_URL=$(gp url 8300)
+      # Remove any existing VITE_API_BASE_URL entries and add the correct one
+      sed -i '/VITE_API_BASE_URL/d' .env
       echo "VITE_API_BASE_URL=$(gp url 8300)" >> .env
-      echo "Using API URL: $(gp url 8300)"
+      echo "VITE_API_BASE_URL=$(gp url 8300)"
+      # Verify the environment variable is set correctly
+      echo "Verifying VITE_API_BASE_URL in .env: $(grep VITE_API_BASE_URL .env)"
+      echo "Current VITE_API_BASE_URL: $VITE_API_BASE_URL"
       echo 'Building frontend container'
+      # Pass the environment variable explicitly to docker-compose build
       VITE_API_BASE_URL=$(gp url 8300) docker-compose build frontend
       echo 'Built frontend'
+    command: |
+      gp await-port 8300
+      eval $(gp env -e)
+      export VITE_API_BASE_URL=$(gp url 8300)
+      cd docker
       echo 'Starting frontend container'
-      VITE_API_BASE_URL=$(gp url 8300) docker-compose up -d frontend
+      docker-compose up -d frontend
       echo 'Started frontend'
 
 ports:
