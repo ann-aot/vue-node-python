@@ -1,6 +1,7 @@
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 import uvicorn
 
 from app.api.v1.api import api_router
@@ -14,7 +15,31 @@ app = FastAPI(
     redoc_url="/redoc",
     # Trust proxy headers for Gitpod environment
     root_path_in_servers=True,
+    # Disable automatic trailing slash redirects to prevent HTTP redirects
+    redirect_slashes=False,
 )
+
+
+# Create a custom ASGI app wrapper for Gitpod HTTPS enforcement
+class HTTPSEnforcer:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        # Force HTTPS scheme for Gitpod environment
+        if os.getenv("GITPOD_WORKSPACE_ID"):
+            scope["scheme"] = "https"
+            print(
+                f"ASGI: HTTPS scheme enforced at scope level for: {scope.get('path', 'unknown')}"
+            )
+
+        await self.app(scope, receive, send)
+
+
+# Wrap the FastAPI app with HTTPS enforcer
+if os.getenv("GITPOD_WORKSPACE_ID"):
+    app = HTTPSEnforcer(app)
+    print("HTTPS Enforcer ASGI wrapper applied")
 
 
 # Get allowed origins from environment variable
@@ -71,12 +96,14 @@ async def handle_https_scheme(request: Request, call_next):
         print(f"Request scheme: {request.scope['scheme']}")
         print(f"Request URL: {request.url}")
 
-        # Check for X-Forwarded-Proto header
+        # Force HTTPS scheme for ALL Gitpod requests (more aggressive approach)
+        request.scope["scheme"] = "https"
+        print(f"HTTPS scheme forced for Gitpod request to: {request.url.path}")
+
+        # Also check for X-Forwarded-Proto header as backup
         forwarded_proto = request.headers.get("x-forwarded-proto")
         if forwarded_proto == "https":
-            # Force HTTPS scheme for Gitpod environment
-            request.scope["scheme"] = "https"
-            print(f"HTTPS scheme enforced for request to: {request.url.path}")
+            print(f"X-Forwarded-Proto: https confirmed for: {request.url.path}")
 
     response = await call_next(request)
 
@@ -95,6 +122,21 @@ async def handle_https_scheme(request: Request, call_next):
 
 # Include API router
 app.include_router(api_router, prefix="/api/v1")
+
+
+# Custom exception handler for Gitpod environment to ensure HTTPS redirects
+@app.exception_handler(HTTPException)
+async def https_redirect_handler(request: Request, exc: HTTPException):
+    if os.getenv("GITPOD_WORKSPACE_ID") and exc.status_code == 307:
+        # Convert any HTTP redirects to HTTPS
+        current_url = str(request.url)
+        if current_url.startswith("http://") and "gitpod.io" in current_url:
+            https_url = current_url.replace("http://", "https://")
+            print(f"Converting HTTP redirect to HTTPS: {current_url} -> {https_url}")
+            return RedirectResponse(url=https_url, status_code=307)
+
+    # For all other exceptions, return the default response
+    return exc
 
 
 @app.get("/")
