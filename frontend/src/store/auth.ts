@@ -1,5 +1,10 @@
 import { reactive } from 'vue';
 import type { AuthState, AuthUserProfile } from '../types/auth';
+import type {
+  GoogleAuthConfig,
+  GoogleGlobalApi,
+  GoogleTokenResponse,
+} from '../types/google';
 
 // Basic global auth store using Vue reactive. For larger apps, switch to Pinia.
 export const authState = reactive<AuthState>({
@@ -30,45 +35,13 @@ export function persistAuthToStorage(): void {
   localStorage.setItem('authState', JSON.stringify(toSave));
 }
 
-type GoogleTokenResponse = {
-  access_token?: string;
-  error?: string;
-};
-
-interface GoogleTokenClient {
-  requestAccessToken: () => void;
-}
-
-interface GoogleOAuth2InitConfig {
-  client_id: string;
-  scope: string;
-  prompt?: string;
-  callback: (response: GoogleTokenResponse) => void;
-}
-
-interface GoogleOAuth2Api {
-  initTokenClient: (config: GoogleOAuth2InitConfig) => GoogleTokenClient;
-}
-
-interface GoogleAccountsApi {
-  oauth2?: GoogleOAuth2Api;
-}
-
-interface GoogleGlobalApi {
-  accounts?: GoogleAccountsApi;
-}
-
 declare global {
   interface Window {
     google?: GoogleGlobalApi;
   }
 }
 
-export interface GoogleAuthConfig {
-  clientId: string;
-  scope?: string;
-  prompt?: 'none' | 'consent' | 'select_account' | string;
-}
+//
 
 export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> {
   // Use One Tap or Button with Google Identity Services OAuth 2.0 Token Client
