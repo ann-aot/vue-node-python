@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 
 class CustomBaseModel(BaseModel):
@@ -11,6 +11,7 @@ class UserBase(CustomBaseModel):
     email: str = Field(..., max_length=255)
     name: str = Field(..., max_length=255)
     avatar_url: Optional[str] = Field(None, max_length=512)
+    dob: Optional[date] = None
 
 
 class UserCreate(UserBase):

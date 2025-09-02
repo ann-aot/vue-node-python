@@ -97,6 +97,7 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
                       email: profile.email,
                       name: profile.name,
                       avatar_url: profile.picture,
+                      dob: authState.user?.dob ?? null,
                     }),
                   }).catch(() => undefined);
                 }

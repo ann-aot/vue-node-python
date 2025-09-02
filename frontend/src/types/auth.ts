@@ -3,6 +3,7 @@ export interface AuthUserProfile {
   email: string;
   name: string;
   avatarUrl?: string;
+  dob?: string; // ISO date string
 }
 
 export interface AuthState {

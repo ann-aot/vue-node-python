@@ -19,6 +19,7 @@ class UserService:
                 email=payload.email,
                 name=payload.name,
                 avatar_url=payload.avatar_url,
+                dob=payload.dob,
             )
             db.add(user)
             db.commit()
@@ -35,6 +36,9 @@ class UserService:
             changed = True
         if user.avatar_url != payload.avatar_url:
             user.avatar_url = payload.avatar_url
+            changed = True
+        if user.dob != payload.dob:
+            user.dob = payload.dob
             changed = True
         if changed:
             db.add(user)
