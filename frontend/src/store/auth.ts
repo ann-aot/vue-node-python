@@ -30,9 +30,37 @@ export function persistAuthToStorage(): void {
   localStorage.setItem('authState', JSON.stringify(toSave));
 }
 
+type GoogleTokenResponse = {
+  access_token?: string;
+  error?: string;
+};
+
+interface GoogleTokenClient {
+  requestAccessToken: () => void;
+}
+
+interface GoogleOAuth2InitConfig {
+  client_id: string;
+  scope: string;
+  prompt?: string;
+  callback: (response: GoogleTokenResponse) => void;
+}
+
+interface GoogleOAuth2Api {
+  initTokenClient: (config: GoogleOAuth2InitConfig) => GoogleTokenClient;
+}
+
+interface GoogleAccountsApi {
+  oauth2?: GoogleOAuth2Api;
+}
+
+interface GoogleGlobalApi {
+  accounts?: GoogleAccountsApi;
+}
+
 declare global {
   interface Window {
-    google?: any;
+    google?: GoogleGlobalApi;
   }
 }
 
@@ -56,14 +84,22 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
         client_id: clientId,
         scope: scope ?? 'openid email profile',
         prompt: prompt ?? 'select_account',
-        callback: (response: any) => {
-          if (response && response.access_token) {
+        callback: (response: GoogleTokenResponse) => {
+          if (response?.access_token) {
             // Get ID token via code flow not supported here; alternatively use "initCodeClient".
             // For basic profile: fetch userinfo endpoint.
             fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
               headers: { Authorization: `Bearer ${response.access_token}` },
             })
-              .then((r) => r.json())
+              .then(
+                (r) =>
+                  r.json() as Promise<{
+                    sub: string;
+                    email: string;
+                    name: string;
+                    picture?: string;
+                  }>,
+              )
               .then((profile) => {
                 const user: AuthUserProfile = {
                   id: profile.sub,
@@ -77,8 +113,8 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
                 persistAuthToStorage();
                 resolve();
               })
-              .catch((err) => reject(err));
-          } else if (response && response.error) {
+              .catch((err: unknown) => reject(err));
+          } else if (response?.error) {
             reject(new Error(response.error));
           } else {
             reject(new Error('Unknown Google response'));

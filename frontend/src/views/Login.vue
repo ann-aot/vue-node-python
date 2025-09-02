@@ -22,8 +22,9 @@ async function handleGoogleLogin(): Promise<void> {
     await signInWithGoogle({ clientId, prompt: 'select_account' });
     const redirect = (route.query.redirect as string) || '/dashboard';
     router.replace(redirect);
-  } catch (err: any) {
-    errorMessage.value = err?.message ?? 'Login failed';
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Login failed';
+    errorMessage.value = message;
   } finally {
     isLoading.value = false;
   }
