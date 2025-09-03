@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserUpdate
 
 
 class UserService:
@@ -38,6 +38,30 @@ class UserService:
             user.avatar_url = payload.avatar_url
             changed = True
         if user.dob != payload.dob:
+            user.dob = payload.dob
+            changed = True
+        if changed:
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        return user
+
+    @staticmethod
+    def update_by_google_sub(db: Session, google_sub: str, payload: UserUpdate) -> User | None:
+        user = UserService.get_by_google_sub(db, google_sub)
+        if user is None:
+            return None
+        changed = False
+        if payload.email is not None and payload.email != user.email:
+            user.email = payload.email
+            changed = True
+        if payload.name is not None and payload.name != user.name:
+            user.name = payload.name
+            changed = True
+        if payload.avatar_url is not None and payload.avatar_url != user.avatar_url:
+            user.avatar_url = payload.avatar_url
+            changed = True
+        if payload.dob is not None and payload.dob != user.dob:
             user.dob = payload.dob
             changed = True
         if changed:

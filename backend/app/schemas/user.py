@@ -24,3 +24,10 @@ class UserResponse(UserBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
+
+class UserUpdate(CustomBaseModel):
+    email: Optional[str] = Field(None, max_length=255)
+    name: Optional[str] = Field(None, max_length=255)
+    avatar_url: Optional[str] = Field(None, max_length=512)
+    dob: Optional[date] = None
+

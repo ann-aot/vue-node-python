@@ -19,14 +19,10 @@ async function saveDob(): Promise<void> {
     return;
   }
   authState.user.dob = dobLocal.value ?? undefined;
-  fetch(`${apiBase}/api/v1/users/google`, {
-    method: 'POST',
+  fetch(`${apiBase}/api/v1/users/${authState.user.id}`, {
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      google_sub: authState.user.id,
-      email: authState.user.email,
-      name: authState.user.name,
-      avatar_url: authState.user.avatarUrl,
       dob: dobLocal.value,
     }),
   })
