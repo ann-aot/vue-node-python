@@ -6,6 +6,11 @@ const user = computed(() => authState.user);
 const editingDob = ref(false);
 const dobLocal = ref<string | null>(authState.user?.dob ?? null);
 
+function startEditDob(): void {
+  dobLocal.value = authState.user?.dob ?? null;
+  editingDob.value = true;
+}
+
 async function saveDob(): Promise<void> {
   const apiBase = import.meta.env.VITE_API_BASE_URL as string | undefined;
   if (!apiBase || !authState.user) {
@@ -23,7 +28,17 @@ async function saveDob(): Promise<void> {
       avatar_url: authState.user.avatarUrl,
       dob: dobLocal.value,
     }),
-  }).catch(() => undefined);
+  })
+    .then((r) => r.ok ? r.json() : null)
+    .then((saved) => {
+      if (saved && authState.user) {
+        authState.user.dob = saved.dob ?? authState.user.dob;
+        authState.user.name = saved.name ?? authState.user.name;
+        authState.user.email = saved.email ?? authState.user.email;
+        authState.user.avatarUrl = saved.avatar_url ?? authState.user.avatarUrl;
+      }
+    })
+    .catch(() => undefined);
   editingDob.value = false;
 }
 </script>
@@ -70,7 +85,7 @@ async function saveDob(): Promise<void> {
                     <v-btn
                       size="small"
                       variant="text"
-                      @click="editingDob = true"
+                      @click="startEditDob()"
                       v-if="!editingDob"
                     >
                       Edit
