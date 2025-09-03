@@ -82,7 +82,10 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
                 persistAuthToStorage();
                 // Save to backend (best-effort)
                 const apiBaseEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
-                const apiBase = apiBaseEnv && apiBaseEnv.length > 0 ? apiBaseEnv : 'http://localhost:8300';
+                let apiBase: string = 'http://localhost:8300';
+                if (apiBaseEnv && apiBaseEnv.length > 0) {
+                  apiBase = apiBaseEnv;
+                }
                 fetch(`${apiBase}/api/v1/users/google`, {
                   method: 'POST',
                   headers: {
