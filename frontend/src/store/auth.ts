@@ -1,10 +1,6 @@
 import { reactive } from 'vue';
 import type { AuthState, AuthUserProfile } from '../types/auth';
-import type {
-  GoogleAuthConfig,
-  GoogleGlobalApi,
-  GoogleTokenResponse,
-} from '../types/google';
+import type { GoogleAuthConfig, GoogleGlobalApi, GoogleTokenResponse } from '../types/google';
 
 // Basic global auth store using Vue reactive. For larger apps, switch to Pinia.
 export const authState = reactive<AuthState>({
