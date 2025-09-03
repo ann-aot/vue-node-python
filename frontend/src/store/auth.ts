@@ -81,22 +81,21 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
                 authState.user = user;
                 persistAuthToStorage();
                 // Save to backend (best-effort)
-                const apiBase = import.meta.env.VITE_API_BASE_URL as string | undefined;
-                if (apiBase) {
-                  fetch(`${apiBase}/api/v1/users/google`, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      google_sub: profile.sub,
-                      email: profile.email,
-                      name: profile.name,
-                      avatar_url: profile.picture,
-                      dob: authState.user?.dob ?? null,
-                    }),
-                  }).catch(() => undefined);
-                }
+                const apiBaseEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
+                const apiBase = apiBaseEnv && apiBaseEnv.length > 0 ? apiBaseEnv : 'http://localhost:8300';
+                fetch(`${apiBase}/api/v1/users/google`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    google_sub: profile.sub,
+                    email: profile.email,
+                    name: profile.name,
+                    avatar_url: profile.picture,
+                    dob: authState.user?.dob ?? null,
+                  }),
+                }).catch(() => undefined);
                 resolve();
               })
               .catch((err: unknown) => reject(err));

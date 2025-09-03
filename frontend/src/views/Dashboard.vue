@@ -12,8 +12,9 @@ function startEditDob(): void {
 }
 
 async function saveDob(): Promise<void> {
-  const apiBase = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  if (!apiBase || !authState.user) {
+  const apiBaseEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
+  const apiBase = apiBaseEnv && apiBaseEnv.length > 0 ? apiBaseEnv : 'http://localhost:8300';
+  if (!authState.user) {
     editingDob.value = false;
     return;
   }
