@@ -29,7 +29,6 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('NOW()')),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     )
-    op.create_index('ix_users_id', 'users', ['id'], unique=False)
     op.create_index('ix_users_google_sub', 'users', ['google_sub'], unique=True)
     op.create_index('ix_users_email', 'users', ['email'], unique=True)
 
@@ -37,6 +36,5 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index('ix_users_email', table_name='users')
     op.drop_index('ix_users_google_sub', table_name='users')
-    op.drop_index('ix_users_id', table_name='users')
     op.drop_table('users')
 
