@@ -29,7 +29,7 @@ async function saveDob(): Promise<void> {
       dob: dobLocal.value,
     }),
   })
-    .then((r) => r.ok ? r.json() : null)
+    .then((r) => (r.ok ? r.json() : null))
     .then((saved) => {
       if (saved && authState.user) {
         authState.user.dob = saved.dob ?? authState.user.dob;
@@ -82,12 +82,7 @@ async function saveDob(): Promise<void> {
                     </div>
                   </template>
                   <template #append>
-                    <v-btn
-                      size="small"
-                      variant="text"
-                      @click="startEditDob()"
-                      v-if="!editingDob"
-                    >
+                    <v-btn size="small" variant="text" @click="startEditDob()" v-if="!editingDob">
                       Edit
                     </v-btn>
                   </template>
