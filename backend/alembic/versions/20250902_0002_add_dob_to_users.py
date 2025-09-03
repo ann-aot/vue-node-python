@@ -1,8 +1,8 @@
 """
 add dob to users
 
-Revision ID: 20250902_0002
-Revises: 20250902_0001
+Revision ID: 003
+Revises: 002
 Create Date: 2025-09-02 00:02:00.000000
 """
 
@@ -11,8 +11,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '20250902_0002'
-down_revision = '20250902_0001'
+revision = '003'
+down_revision = '002'
 branch_labels = None
 depends_on = None
 
