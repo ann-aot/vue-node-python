@@ -55,13 +55,26 @@ async function saveDob(): Promise<void> {
                   <template #subtitle>
                     <div v-if="!editingDob">{{ user.dob || 'Not set' }}</div>
                     <div v-else class="d-flex align-center" style="gap: 8px">
-                      <v-text-field v-model="dobLocal" type="date" density="compact" hide-details style="max-width: 220px" />
+                      <v-text-field
+                        v-model="dobLocal"
+                        type="date"
+                        density="compact"
+                        hide-details
+                        style="max-width: 220px"
+                      />
                       <v-btn size="small" color="primary" @click="saveDob">Save</v-btn>
                       <v-btn size="small" variant="text" @click="editingDob = false">Cancel</v-btn>
                     </div>
                   </template>
                   <template #append>
-                    <v-btn size="small" variant="text" @click="editingDob = true" v-if="!editingDob">Edit</v-btn>
+                    <v-btn
+                      size="small"
+                      variant="text"
+                      @click="editingDob = true"
+                      v-if="!editingDob"
+                    >
+                      Edit
+                    </v-btn>
                   </template>
                 </v-list-item>
               </v-list>
