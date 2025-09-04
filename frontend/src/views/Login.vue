@@ -44,9 +44,11 @@ async function handleGoogleLogin(): Promise<void> {
             </v-alert>
             <v-btn
               color="primary"
+              size="large"
               block
               :loading="isLoading"
               :disabled="!isClientConfigured"
+              prepend-icon="mdi-google"
               @click="handleGoogleLogin"
             >
               Continue with Google

@@ -5,10 +5,12 @@ import { authState } from '../store/auth';
 const user = computed(() => authState.user);
 const editingDob = ref(false);
 const dobLocal = ref<string | null>(authState.user?.dob ?? null);
+const dobDialog = ref(false);
 
 function startEditDob(): void {
   dobLocal.value = authState.user?.dob ?? null;
   editingDob.value = true;
+  dobDialog.value = true;
 }
 
 async function saveDob(): Promise<void> {
@@ -37,6 +39,7 @@ async function saveDob(): Promise<void> {
     })
     .catch(() => undefined);
   editingDob.value = false;
+  dobDialog.value = false;
 }
 </script>
 
@@ -75,26 +78,26 @@ async function saveDob(): Promise<void> {
                 <v-list-item>
                   <template #title>DOB</template>
                   <template #subtitle>
-                    <div v-if="!editingDob">{{ user.dob || 'Not set' }}</div>
-                    <div v-else class="d-flex align-center" style="gap: 8px">
-                      <v-text-field
-                        v-model="dobLocal"
-                        type="date"
-                        density="compact"
-                        hide-details
-                        style="max-width: 220px"
-                      />
-                      <v-btn size="small" color="primary" @click="saveDob">Save</v-btn>
-                      <v-btn size="small" variant="text" @click="editingDob = false">Cancel</v-btn>
-                    </div>
+                    <div>{{ user.dob || 'Not set' }}</div>
                   </template>
                   <template #append>
-                    <v-btn size="small" variant="text" @click="startEditDob()" v-if="!editingDob">
-                      Edit
-                    </v-btn>
+                    <v-btn size="small" variant="text" @click="startEditDob()">Edit</v-btn>
                   </template>
                 </v-list-item>
               </v-list>
+              <v-dialog v-model="dobDialog" max-width="360">
+                <v-card>
+                  <v-card-title class="text-h6">Select date of birth</v-card-title>
+                  <v-card-text>
+                    <v-text-field v-model="dobLocal" type="date" label="DOB" hide-details />
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn variant="text" @click="dobDialog = false; editingDob = false">Cancel</v-btn>
+                    <v-btn color="primary" @click="saveDob">Save</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </div>
             <div v-else>Loading...</div>
           </v-card-text>
