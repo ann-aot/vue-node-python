@@ -41,27 +41,37 @@ async function saveDob(): Promise<void> {
 </script>
 
 <template>
-  <v-container class="py-8">
+  <v-container class="py-8" fluid>
     <h2 class="text-h5 mb-4">Dashboard</h2>
     <v-row align="start" justify="center">
-      <v-col cols="12" sm="10" md="8" lg="7" xl="6">
-        <v-card elevation="3" class="pa-4 pa-md-6">
-          <v-card-text>
+      <v-col cols="12" sm="12" md="11" lg="10" xl="9">
+        <v-card elevation="3" class="pa-4 pa-md-6" style="overflow: visible">
+          <v-card-text style="overflow: visible; word-break: break-word">
             <div v-if="user">
               <div class="d-flex align-center mb-4" style="gap: 12px">
                 <v-avatar size="56" v-if="user.avatarUrl">
                   <img :src="user.avatarUrl" alt="Avatar" />
                 </v-avatar>
                 <div>
-                  <div class="text-subtitle-1">{{ user.name }}</div>
-                  <div class="text-body-2">{{ user.email }}</div>
+                  <div class="text-subtitle-1" style="word-break: break-word">{{ user.name }}</div>
+                  <div class="text-body-2" style="word-break: break-word">{{ user.email }}</div>
                 </div>
               </div>
               <v-divider class="my-4" />
               <div class="text-subtitle-2 mb-2">Profile details</div>
-              <v-list density="comfortable">
-                <v-list-item title="Name" :subtitle="user.name" />
-                <v-list-item title="Email" :subtitle="user.email" />
+              <v-list density="comfortable" style="overflow: visible">
+                <v-list-item>
+                  <template #title>Name</template>
+                  <template #subtitle>
+                    <div style="white-space: normal; word-break: break-word">{{ user.name }}</div>
+                  </template>
+                </v-list-item>
+                <v-list-item>
+                  <template #title>Email</template>
+                  <template #subtitle>
+                    <div style="white-space: normal; word-break: break-word">{{ user.email }}</div>
+                  </template>
+                </v-list-item>
                 <v-list-item>
                   <template #title>DOB</template>
                   <template #subtitle>
