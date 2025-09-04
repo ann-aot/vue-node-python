@@ -49,6 +49,8 @@ async function handleGoogleLogin(): Promise<void> {
               :loading="isLoading"
               :disabled="!isClientConfigured"
               prepend-icon="mdi-google"
+              variant="elevated"
+              style="overflow: visible; white-space: normal; height: 56px;"
               @click="handleGoogleLogin"
             >
               Continue with Google
