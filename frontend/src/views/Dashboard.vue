@@ -41,6 +41,11 @@ async function saveDob(): Promise<void> {
   editingDob.value = false;
   dobDialog.value = false;
 }
+
+function cancelDob(): void {
+  editingDob.value = false;
+  dobDialog.value = false;
+}
 </script>
 
 <template>
@@ -93,7 +98,7 @@ async function saveDob(): Promise<void> {
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer />
-                    <v-btn variant="text" @click="dobDialog = false; editingDob = false">Cancel</v-btn>
+                    <v-btn variant="text" @click="cancelDob">Cancel</v-btn>
                     <v-btn color="primary" @click="saveDob">Save</v-btn>
                   </v-card-actions>
                 </v-card>
