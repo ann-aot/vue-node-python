@@ -37,7 +37,8 @@ class UserService:
         if user.avatar_url != payload.avatar_url:
             user.avatar_url = payload.avatar_url
             changed = True
-        if user.dob != payload.dob:
+        # Only update DOB if an explicit non-null value is provided
+        if payload.dob is not None and user.dob != payload.dob:
             user.dob = payload.dob
             changed = True
         if changed:

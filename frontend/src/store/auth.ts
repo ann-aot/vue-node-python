@@ -96,9 +96,21 @@ export async function signInWithGoogle(config: GoogleAuthConfig): Promise<void> 
                     email: profile.email,
                     name: profile.name,
                     avatar_url: profile.picture,
-                    dob: authState.user?.dob ?? null,
+                    // only send dob if already known locally
+                    ...(authState.user?.dob ? { dob: authState.user.dob } : {}),
                   }),
-                }).catch(() => undefined);
+                })
+                  .then((r) => (r.ok ? r.json() : null))
+                  .then((saved) => {
+                    if (saved && authState.user) {
+                      authState.user.dob = saved.dob ?? authState.user.dob;
+                      authState.user.name = saved.name ?? authState.user.name;
+                      authState.user.email = saved.email ?? authState.user.email;
+                      authState.user.avatarUrl = saved.avatar_url ?? authState.user.avatarUrl;
+                      persistAuthToStorage();
+                    }
+                  })
+                  .catch(() => undefined);
                 resolve();
               })
               .catch((err: unknown) => reject(err));
