@@ -50,7 +50,7 @@ async function handleGoogleLogin(): Promise<void> {
               :disabled="!isClientConfigured"
               prepend-icon="mdi-google"
               variant="elevated"
-              style="overflow: visible; white-space: normal; height: 56px;"
+              style="overflow: visible; white-space: normal; height: 56px"
               @click="handleGoogleLogin"
             >
               Continue with Google
